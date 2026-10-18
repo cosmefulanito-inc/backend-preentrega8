@@ -13,8 +13,12 @@ export async function getAll() {
 
 export async function getById(id) {
     try {
-        const foundBooking = await Booking.findById(id).lean()
+        const foundBooking = await Booking.findById(id)
+        .populate("services.service") // agrego populate para traer los servicios usando el id de mongo
+        .lean()
+        
         return foundBooking ?? null
+
     } catch (error) {
         console.error("Error al obtener reserva por id de MongoDB", error)
         throw error        
@@ -23,7 +27,7 @@ export async function getById(id) {
 
 export async function create(bookingData) {
     try {
-        const newBooking = await Booking.create(bookingData).lean()
+        const newBooking = await Booking.create(bookingData)
         return newBooking.toObject()
     } catch (error) {
         console.error("Error al crear nueva reserva en MongoDB", error)
@@ -62,7 +66,7 @@ export async function update(id, changes) {
 export async function remove(id) {
     try {
         const removedBooking = await Booking.findByIdAndDelete(id).lean()
-        return removedBooking.toObject() !== null // devuelve true si se pudo eliminar el servicio        
+         return removedBooking !== null // devuelve true si se pudo eliminar el servicio        
     } catch (error) {
         console.error("Error al internar eliminar reserva en MongoDB", error)
         throw error        

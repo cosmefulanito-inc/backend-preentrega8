@@ -51,3 +51,20 @@ export async function remove(id) {
     }
 }
 
+export async function getPaginated(filter, { skip, limit, sort }) {
+    try {
+        const docs = await Service.find(filter)
+            .sort(sort)
+            .skip(skip)
+            .limit(limit)
+            .lean()
+
+        const total = await Service.countDocuments(filter)
+
+        return { docs, total }
+    } catch (error) {
+        console.error("Error al obtener servicios paginados de MongoDB", error)
+        throw error
+    }
+}
+
